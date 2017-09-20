@@ -1,0 +1,24 @@
+{
+  "name": "shopsure-marketing",
+  "version": "0.5.0",
+  "description": "The marketing website for ShopSure",
+  "main": "index.html",
+  "author": "Quintin Schnehage",
+  "license": "UNLICENSED",
+  "repository": "https://github.com/QuintinS/shopsure-marketing.git",
+  "devDependencies": {
+    "autoprefixer": "^6.7.7",
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-livereload": "^3.8.1",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-postcss": "^6.4.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-uglify": "^2.1.2",
+    "gulp-uglifycss": "^1.0.8",
+    "pump": "^1.0.2"
+  }
+}

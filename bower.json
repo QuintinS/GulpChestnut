@@ -1,0 +1,23 @@
+{
+  "name": "shopsure-marketing",
+  "description": "The marketing website for ShopSure",
+  "main": "index.html",
+  "authors": [
+    "Quintin Schnehage"
+  ],
+  "license": "UNLICENSED",
+  "homepage": "index.html",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "susy": "^2.2.12",
+    "jquery": "^3.2.1",
+    "bourbon": "^4.3.4"
+  }
+}

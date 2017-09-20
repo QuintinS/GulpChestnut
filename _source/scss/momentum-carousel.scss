@@ -1,0 +1,13 @@
+.momentum-carousel {
+  .momentum-carousel__button {
+
+  }
+  .momentum-carousel__elements {
+    width: 100%;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch; /* lets it scroll lazy */
+    .momentum-carousel__element {
+      display: inline-block;
+    }
+  }
+}
