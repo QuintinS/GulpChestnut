@@ -3,6 +3,8 @@
 /* ========== Paths ========== */
 
 var
+
+    pluginName = "cardtricks",
     pluginSrcSCSS = './_source/scss/**/*.{scss,sass}',
     pluginSrcJS = './_source/js/**/*.js',
     pluginDestJS = './dist/js',
@@ -10,6 +12,7 @@ var
 
     demoSrcSCSS = './demo/_source/scss/**/*.{scss,sass}',
     demoSrcJS = './demo/_source/js/**/*.js',
+    demoSrcLibs = './demo/_source/js/libs/*js',
     demoDestJS = './demo/js',
     demoDestCSS = './demo/css',
 
@@ -44,38 +47,40 @@ var
 /* ========== Pipelines ========== */
 
 // Javascript Libs Pipeline
-gulp.task('jsLibs', function(done){
+gulp.task('pluginLibs', function(done){
 
   gulp.src(
     'bower_components/jquery/dist/jquery.js',
     'bower_components/foundation-sites/js/*.js'
   )
-    .pipe(plumber(errorHandler))
-    .pipe(concat('libs.js'))
-    .pipe(gulp.dest(pluginDestJS))
-    .pipe(rename('libs.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest(pluginDestJS));
+  .pipe(plumber(errorHandler))
+  .pipe(concat('libs.js'))
+  .pipe(gulp.dest(pluginDestJS))
+  .pipe(rename('libs.min.js'))
+  .pipe(uglify())
+  .pipe(gulp.dest(pluginDestJS));
   done();
 
 });
 
-// Plugin Soure Javascript Pipeline
+// Source Javascript Pipeline
 gulp.task('pluginJs', function(done){
 
   gulp.src(pluginSrcJS)
-    .pipe(plumber(errorHandler))
-    // .pipe(concat('scripts.js'))
-    .pipe(gulp.dest(pluginDestJS))
-    // .pipe(rename('scripts.min.js'))
+  .pipe(plumber(errorHandler))
+  .pipe(gulp.dest(pluginDestJS))
+  .pipe(sourcemaps.init())
+    .pipe(concat(pluginName + '.js'))
+    .pipe(rename(pluginName + '.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest(pluginDestJS))
-    .pipe(plugins.livereload());
+  .pipe(sourcemaps.write(""))
+  .pipe(gulp.dest(pluginDestJS))
+  .pipe(plugins.livereload());
   done();
 
 });
 
-// Plugin Soure SCSS Pipeline
+// Source SCSS Pipeline
 gulp.task('pluginSass', function(done){
 
   var pluginsPostCSS = [
@@ -85,36 +90,60 @@ gulp.task('pluginSass', function(done){
   gulp.src(pluginSrcSCSS)
     .pipe(plumber(errorHandler))
     .pipe(sourcemaps.init())
-    .pipe(sass({
-      errLogToConsole: true
-    }))
-    .pipe(postcss(pluginsPostCSS))
-    .pipe(uglifycss())
-    .pipe(sourcemaps.write())
+      .pipe(sass({
+        errLogToConsole: true
+      }))
+      .pipe(postcss(pluginsPostCSS))
+      .pipe(gulp.dest(pluginDestCSS))
+      .pipe(concat(pluginName + '.css'))
+      .pipe(gulp.dest(pluginDestCSS))
+      .pipe(uglifycss())
+      .pipe(rename(pluginName + '.min.css'))
+      .pipe(sourcemaps.write(""))
     .pipe(gulp.dest(pluginDestCSS))
     .pipe(plugins.livereload());
   done();
 
+
 });
 
 
+// Demo Libs Pipeline
+gulp.task('demoLibs', function(done){
 
-// Plugin Soure Javascript Pipeline
-gulp.task('demoJs', function(done){
-
-  gulp.src(demoSrcJS)
-    .pipe(plumber(errorHandler))
-    // .pipe(concat('scripts.js'))
-    .pipe(gulp.dest(demoDestJS))
-    // .pipe(rename('scripts.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest(demoDestJS))
-    .pipe(plugins.livereload());
+  gulp.src(
+    'bower_components/jquery/dist/jquery.js',
+    'bower_components/foundation-sites/js/*.js',
+    'bower_components/highlightjs/highlight.pack.min.js'
+  )
+  .pipe(plumber(errorHandler))
+  .pipe(gulp.dest(demoDestJS))
+  .pipe(concat("demolibs.js"))
+  .pipe(rename('demolibs.min.js'))
+  .pipe(uglify())
+  .pipe(gulp.dest(demoDestJS));
   done();
 
 });
 
-// Plugin Soure SCSS Pipeline
+// Demo Javascript Pipeline
+gulp.task('demoJs', function(done){
+
+  gulp.src(demoSrcJS)
+  .pipe(plumber(errorHandler))
+  .pipe(gulp.dest(demoDestJS))
+  .pipe(sourcemaps.init())
+    .pipe(concat('demo.js'))
+    .pipe(rename('demo.min.js'))
+    .pipe(uglify())
+  .pipe(sourcemaps.write(""))
+  .pipe(gulp.dest(demoDestJS))
+  .pipe(plugins.livereload());
+  done();
+
+});
+
+// Demo SCSS Pipeline
 gulp.task('demoSass', function(done){
 
   var demosPostCSS = [
@@ -124,12 +153,16 @@ gulp.task('demoSass', function(done){
   gulp.src(demoSrcSCSS)
     .pipe(plumber(errorHandler))
     .pipe(sourcemaps.init())
-    .pipe(sass({
-      errLogToConsole: true
-    }))
-    .pipe(postcss(demosPostCSS))
-    .pipe(uglifycss())
-    .pipe(sourcemaps.write())
+      .pipe(sass({
+        errLogToConsole: true
+      }))
+      .pipe(postcss(demosPostCSS))
+      .pipe(gulp.dest(demoDestCSS))
+      .pipe(concat('demo.css'))
+      .pipe(gulp.dest(demoDestCSS))
+      .pipe(uglifycss())
+      .pipe(rename('demo.min.css'))
+      .pipe(sourcemaps.write(""))
     .pipe(gulp.dest(demoDestCSS))
     .pipe(plugins.livereload());
   done();
@@ -139,7 +172,7 @@ gulp.task('demoSass', function(done){
 
 /* ========== Watch ========== */
 
-gulp.task('default', function(done){
+gulp.task('watch', function(done){
 
   plugins.livereload.listen();
 
@@ -149,12 +182,13 @@ gulp.task('default', function(done){
   gulp.watch(demoSrcSCSS, gulp.series('demoSass'));
   gulp.watch(demoSrcJS, gulp.series('demoJs'));
 
-  gulp.watch('./_source/js/libs/**/*.{js}', gulp.series('jsLibs'));
-
   done();
 
 });
 
+gulp.task('build', gulp.series(["demoLibs", "pluginLibs"]) );
+
+gulp.task('default', gulp.series(["watch"]));
 
 function errorHandler(error) {
 	gutil.log(
