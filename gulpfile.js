@@ -4,11 +4,11 @@
 
 var
 
-    pluginName = "cardtricks",
-    pluginSrcSCSS = './_source/scss/**/*.{scss,sass}',
-    pluginSrcJS = './_source/js/**/*.js',
-    pluginDestJS = './dist/js',
-    pluginDestCSS = './dist/css',
+    projectName = "cardtricks",
+    projectSrcSCSS = './_source/scss/**/*.{scss,sass}',
+    projectSrcJS = './_source/js/**/*.js',
+    projectDestJS = './dist/js',
+    projectDestCSS = './dist/css',
 
     demoSrcSCSS = './demo/_source/scss/**/*.{scss,sass}',
     demoSrcJS = './demo/_source/js/**/*.js',
@@ -42,12 +42,12 @@ var
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
     pump = require('pump'),
-    plugins = gulpLoadPlugins();
+    projects = gulpLoadPlugins();
 
 /* ========== Pipelines ========== */
 
 // Javascript Libs Pipeline
-gulp.task('pluginLibs', function(done){
+gulp.task('projectLibs', function(done){
 
   gulp.src(
     'bower_components/jquery/dist/jquery.js',
@@ -55,53 +55,53 @@ gulp.task('pluginLibs', function(done){
   )
   .pipe(plumber(errorHandler))
   .pipe(concat('libs.js'))
-  .pipe(gulp.dest(pluginDestJS))
+  .pipe(gulp.dest(projectDestJS))
   .pipe(rename('libs.min.js'))
   .pipe(uglify())
-  .pipe(gulp.dest(pluginDestJS));
+  .pipe(gulp.dest(projectDestJS));
   done();
 
 });
 
 // Source Javascript Pipeline
-gulp.task('pluginJs', function(done){
+gulp.task('projectJs', function(done){
 
-  gulp.src(pluginSrcJS)
+  gulp.src(projectSrcJS)
   .pipe(plumber(errorHandler))
-  .pipe(gulp.dest(pluginDestJS))
+  .pipe(gulp.dest(projectDestJS))
   .pipe(sourcemaps.init())
-    .pipe(concat(pluginName + '.js'))
-    .pipe(rename(pluginName + '.min.js'))
+    .pipe(concat(projectName + '.js'))
+    .pipe(rename(projectName + '.min.js'))
     .pipe(uglify())
   .pipe(sourcemaps.write(""))
-  .pipe(gulp.dest(pluginDestJS))
-  .pipe(plugins.livereload());
+  .pipe(gulp.dest(projectDestJS))
+  .pipe(projects.livereload());
   done();
 
 });
 
 // Source SCSS Pipeline
-gulp.task('pluginSass', function(done){
+gulp.task('projectSass', function(done){
 
-  var pluginsPostCSS = [
+  var projectsPostCSS = [
     autoprefixer({browsers: ['last 1 version']})
   ];
 
-  gulp.src(pluginSrcSCSS)
+  gulp.src(projectSrcSCSS)
     .pipe(plumber(errorHandler))
     .pipe(sourcemaps.init())
       .pipe(sass({
         errLogToConsole: true
       }))
-      .pipe(postcss(pluginsPostCSS))
-      .pipe(gulp.dest(pluginDestCSS))
-      .pipe(concat(pluginName + '.css'))
-      .pipe(gulp.dest(pluginDestCSS))
+      .pipe(postcss(projectsPostCSS))
+      .pipe(gulp.dest(projectDestCSS))
+      .pipe(concat(projectName + '.css'))
+      .pipe(gulp.dest(projectDestCSS))
       .pipe(uglifycss())
-      .pipe(rename(pluginName + '.min.css'))
+      .pipe(rename(projectName + '.min.css'))
       .pipe(sourcemaps.write(""))
-    .pipe(gulp.dest(pluginDestCSS))
-    .pipe(plugins.livereload());
+    .pipe(gulp.dest(projectDestCSS))
+    .pipe(projects.livereload());
   done();
 
 
@@ -138,7 +138,7 @@ gulp.task('demoJs', function(done){
     .pipe(uglify())
   .pipe(sourcemaps.write(""))
   .pipe(gulp.dest(demoDestJS))
-  .pipe(plugins.livereload());
+  .pipe(projects.livereload());
   done();
 
 });
@@ -164,7 +164,7 @@ gulp.task('demoSass', function(done){
       .pipe(rename('demo.min.css'))
       .pipe(sourcemaps.write(""))
     .pipe(gulp.dest(demoDestCSS))
-    .pipe(plugins.livereload());
+    .pipe(projects.livereload());
   done();
 
 });
@@ -174,10 +174,10 @@ gulp.task('demoSass', function(done){
 
 gulp.task('watch', function(done){
 
-  plugins.livereload.listen();
+  projects.livereload.listen();
 
-  gulp.watch(pluginSrcSCSS, gulp.series('pluginSass'));
-  gulp.watch(pluginSrcJS, gulp.series('pluginJs'));
+  gulp.watch(projectSrcSCSS, gulp.series('projectSass'));
+  gulp.watch(projectSrcJS, gulp.series('projectJs'));
 
   gulp.watch(demoSrcSCSS, gulp.series('demoSass'));
   gulp.watch(demoSrcJS, gulp.series('demoJs'));
@@ -186,7 +186,7 @@ gulp.task('watch', function(done){
 
 });
 
-gulp.task('build', gulp.series(["demoLibs", "pluginLibs"]) );
+gulp.task('build', gulp.series(["demoLibs", "projectLibs"]) );
 
 gulp.task('default', gulp.series(["watch"]));
 
